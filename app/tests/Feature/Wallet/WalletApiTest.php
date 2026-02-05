@@ -21,6 +21,17 @@ class WalletApiTest extends TestCase
         $this->assertDatabaseCount('wallets', 1);
     }
 
+    public function test_can_not_create_wallet_throw_validation(): void
+    {
+        $response = $this->postJson('/api/wallets', [
+            'address' => 'test-address',
+            'currency' => 'UAH',
+        ]);
+
+        $response->assertStatus(422);
+        $this->assertDatabaseCount('wallets', 0);
+    }
+
     public function test_can_list_wallets(): void
     {
         Wallet::factory()->count(3)->create();
