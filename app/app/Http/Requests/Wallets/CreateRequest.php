@@ -16,9 +16,11 @@ final class CreateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $supportedCurrencies = (array) config('app.supported_currencies');
+
         return [
             'address' => ['required', 'string'],
-            'currency' => ['required', 'in:BTC,LTC,ETH'], //todo move to configuration
+            'currency' => ['required', 'in:' . implode(',', $supportedCurrencies)],
         ];
     }
 

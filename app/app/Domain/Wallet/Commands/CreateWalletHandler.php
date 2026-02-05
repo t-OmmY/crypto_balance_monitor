@@ -2,6 +2,7 @@
 
 namespace App\Domain\Wallet\Commands;
 
+use App\Domain\Wallet\DTOs\WalletData;
 use App\Models\Wallet;
 use App\Models\WalletBalanceHistory;
 use Illuminate\Support\Facades\DB;
@@ -12,14 +13,14 @@ final readonly class CreateWalletHandler
     /**
      * @throws Throwable
      */
-    public function handle(CreateWallet $command): Wallet
+    public function handle(CreateWallet $command): WalletData
     {
         $wallet = Wallet::where([
             'address' => $command->getAddress(),
             'currency' => $command->getCurrency()
         ])->first();
         if (null !== $wallet) {
-            return $wallet;
+            return WalletData::fromModel($wallet);
         }
 
         DB::beginTransaction();
@@ -38,11 +39,10 @@ final readonly class CreateWalletHandler
 
             DB::commit();
 
-            return $wallet;
+            return WalletData::fromModel($wallet);
         } catch (Throwable $exception) {
             DB::rollBack();
 
-            //todo what if?
             throw $exception;
         }
     }

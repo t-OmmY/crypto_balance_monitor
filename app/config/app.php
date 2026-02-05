@@ -123,4 +123,20 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Supported currencies
+    |--------------------------------------------------------------------------
+    |
+    | These configuration options determine supported currencies
+    |
+    */
+
+    'supported_currencies' => [
+        'BTC',
+        'LTC',
+        'ETH',
+    ],
+
 ];
