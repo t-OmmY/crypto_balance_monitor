@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use DateTime;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Wallet extends BaseUuidModel
 {
+    use HasFactory;
+
     protected $fillable = [
         'address',
         'currency',
