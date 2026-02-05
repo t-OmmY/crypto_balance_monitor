@@ -20,6 +20,11 @@ return (new PhpCsFixer\Config())
         'no_unused_imports' => true,
         'strict_param' => true,
         'declare_strict_types' => true,
-        'blank_line_after_opening_tag' => false
+        'blank_line_after_opening_tag' => false,
+        'braces_position' => [
+            'classes_opening_brace' => 'next_line_unless_newline_at_signature_end',
+            'control_structures_opening_brace' => 'same_line',
+            'functions_opening_brace' => 'next_line_unless_newline_at_signature_end',
+        ],
     ])
     ->setFinder($finder);

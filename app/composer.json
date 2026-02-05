@@ -49,6 +49,7 @@
             "@php artisan config:clear --ansi",
             "@php artisan test"
         ],
+        "cs:check": "php ./vendor/bin/php-cs-fixer fix --dry-run --diff --verbose",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
