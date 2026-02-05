@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Requests\Wallets;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class GetRequest extends FormRequest
+final class GetRequest extends FormRequest
 {
     public function authorize(): bool
     {

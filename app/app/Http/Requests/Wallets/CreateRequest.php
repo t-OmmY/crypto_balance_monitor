@@ -4,7 +4,7 @@ namespace app\Http\Requests\Wallets;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateRequest extends FormRequest
+final class CreateRequest extends FormRequest
 {
     public function authorize(): bool
     {

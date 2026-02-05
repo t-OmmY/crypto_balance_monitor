@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PaginationRequest extends FormRequest
+final class PaginationRequest extends FormRequest
 {
     private const int DEFAULT_PER_PAGE = 5;
 

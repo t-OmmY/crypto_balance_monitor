@@ -2,17 +2,23 @@
 
 namespace App\Http\Controllers\Wallets;
 
+use App\Domain\Wallet\Queries\GetWalletById;
+use App\Domain\Wallet\Queries\GetWalletByIdHandler;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Wallets\GetRequest;
-use App\Models\Wallet;
 use Illuminate\Http\JsonResponse;
 
-class GetController extends Controller
+final class GetController extends Controller
 {
+    public function __construct(
+        private readonly GetWalletByIdHandler $getWalletByIdHandler
+    ) {
+    }
+
     public function __invoke(GetRequest $request): JsonResponse
     {
-        //todo move to better place
-        $wallet = Wallet::find($request->getId());
+        $query = new GetWalletById($request->getId());
+        $wallet = $this->getWalletByIdHandler->handle($query);
 
         return response()->json($wallet);
     }

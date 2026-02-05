@@ -2,47 +2,27 @@
 
 namespace App\Http\Controllers\Wallets;
 
+use App\Domain\Wallet\Commands\CreateWallet;
+use App\Domain\Wallet\Commands\CreateWalletHandler;
 use App\Http\Controllers\Controller;
 use app\Http\Requests\Wallets\CreateRequest;
-use App\Models\Wallet;
-use App\Models\WalletBalanceHistory;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class CreateController extends Controller
+final class CreateController extends Controller
 {
+    public function __construct(
+        private readonly CreateWalletHandler $createWalletHandler
+    ) {
+    }
+
     /**
      * @throws Throwable
      */
     public function __invoke(CreateRequest $request): JsonResponse
     {
-        //todo move to other layer
-        $wallet = Wallet::where(['address' => $request->getAddress(), 'currency' => $request->getCurrency()])->first();
-        if (null !== $wallet) {
-            return response()->json($wallet);
-        }
-
-        DB::beginTransaction();
-        try {
-            $wallet = Wallet::create([
-                'address' => $request->getAddress(),
-                'currency' => $request->getCurrency(),
-                'last_balance' => 0,
-            ]);
-
-            WalletBalanceHistory::create([
-                'wallet_id' => $wallet->getId(),
-                'balance' => 0,
-                'created_at' => now(),
-            ]);
-
-            DB::commit();
-        } catch (Throwable $exception) {
-            DB::rollBack();
-
-            throw $exception;
-        }
+        $command = new CreateWallet($request->getAddress(), $request->getCurrency());
+        $wallet = $this->createWalletHandler->handle($command);
 
         return response()->json($wallet, 201);
     }
