@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Wallets;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CreateWalletRequest;
+use app\Http\Requests\Wallets\CreateRequest;
 use App\Models\Wallet;
 use App\Models\WalletBalanceHistory;
 use Illuminate\Http\JsonResponse;
@@ -15,19 +15,24 @@ class CreateController extends Controller
     /**
      * @throws Throwable
      */
-    public function __invoke(CreateWalletRequest $request): JsonResponse
+    public function __invoke(CreateRequest $request): JsonResponse
     {
         //todo move to other layer
+        $wallet = Wallet::where(['address' => $request->getAddress(), 'currency' => $request->getCurrency()])->first();
+        if (null !== $wallet) {
+            return response()->json($wallet);
+        }
+
         DB::beginTransaction();
         try {
             $wallet = Wallet::create([
-                'address' => $request->get('address'),
-                'currency' => $request->get('currency'),
+                'address' => $request->getAddress(),
+                'currency' => $request->getCurrency(),
                 'last_balance' => 0,
             ]);
 
             WalletBalanceHistory::create([
-                'wallet_id' => $wallet->getAttribute('id'),
+                'wallet_id' => $wallet->getId(),
                 'balance' => 0,
                 'created_at' => now(),
             ]);

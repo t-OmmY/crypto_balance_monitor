@@ -21,4 +21,9 @@ class Wallet extends BaseUuidModel
     {
         return $this->hasMany(WalletBalanceHistory::class);
     }
+
+    public function getId(): string
+    {
+        return $this->getAttribute('id');
+    }
 }

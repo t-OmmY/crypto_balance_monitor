@@ -1,11 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Requests;
+namespace app\Http\Requests\Wallets;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateWalletRequest extends FormRequest
+class CreateRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -13,7 +12,7 @@ class CreateWalletRequest extends FormRequest
     }
 
     /**
-     * @return array<string, ValidationRule|array|string>
+     * @return string[]
      */
     public function rules(): array
     {
@@ -21,5 +20,15 @@ class CreateWalletRequest extends FormRequest
             'address' => ['required', 'string'],
             'currency' => ['required', 'in:BTC,LTC,ETH'], //todo move to configuration
         ];
+    }
+
+    public function getAddress(): string
+    {
+        return $this->get('address');
+    }
+
+    public function getCurrency(): string
+    {
+        return $this->get('currency');
     }
 }
