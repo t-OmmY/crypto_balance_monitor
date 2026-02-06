@@ -63,6 +63,8 @@ final class UpdateWalletBalanceJob implements ShouldQueue
                     'last_balance_changed_at' => now(),
                 ]);
             }
+
+            DB::commit();
         } catch (Throwable $exception) {
             DB::rollBack();
 

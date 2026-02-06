@@ -40,4 +40,14 @@ final class CreateWalletTest extends TestCase
         $response->assertStatus(422);
         $this->assertDatabaseCount('wallets', 0);
     }
+
+    public function test_invalid_eth_address_fails_validation(): void
+    {
+        $response = $this->postJson('/api/wallets', [
+            'currency' => 'ETH',
+            'address' => 'invalid',
+        ]);
+
+        $response->assertStatus(422);
+    }
 }
