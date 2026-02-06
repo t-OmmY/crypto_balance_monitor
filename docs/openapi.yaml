@@ -1,0 +1,135 @@
+openapi: 3.0.3
+
+info:
+  title: Crypto Balance Monitor API
+  description: |
+    API for monitoring cryptocurrency wallet balances.
+    The application allows adding wallets and tracking balance changes over time.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost/api
+    description: Local development
+
+tags:
+  - name: Wallets
+    description: Wallet management and balance monitoring
+
+paths:
+  /wallets:
+    post:
+      tags: [Wallets]
+      summary: Add a new wallet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWalletRequest'
+      responses:
+        '201':
+          description: Wallet created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+        '422':
+          description: Validation error
+
+    get:
+      tags: [Wallets]
+      summary: Get list of wallets
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number for pagination
+        - in: query
+          name: per_page
+          schema:
+            type: integer
+          description: Number of items per page for pagination
+      responses:
+        '200':
+          description: Paginated list of wallets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WalletCollection'
+
+  /wallets/{id}:
+    get:
+      tags: [Wallets]
+      summary: Get wallet by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Wallet details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+        '404':
+          description: Wallet not found
+
+components:
+  schemas:
+    CreateWalletRequest:
+      type: object
+      required:
+        - currency
+        - address
+      properties:
+        currency:
+          type: string
+          enum: [BTC, LTC, ETH]
+          example: BTC
+        address:
+          type: string
+          example: 34xp4vRoCGJym3xR7yCVPFHoCNxv4Twseo
+
+    Wallet:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        currency:
+          type: string
+          example: BTC
+        address:
+          type: string
+          example: 34xp4vRoCGJym3xR7yCVPFHoCNxv4Twseo
+        last_balance:
+          type: number
+          format: float
+          example: 0.5234
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    WalletCollection:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Wallet'
+        meta:
+          type: object
+          properties:
+            current_page:
+              type: integer
+              example: 1
+            total:
+              type: integer
+              example: 10
