@@ -49,15 +49,20 @@ The project includes:
 - Feature tests for API endpoints
 
 Tests can be run using:
+```shell
 php artisan test
+```
 
 ### 8. Static analysis & code quality
 
 - PHP_CodeSniffer
-```./vendor/bin/phpcs```
+```shell
+./vendor/bin/phpcs
+```
 - Psalm
-```./vendor/bin/psalm --no-cache```
-
+```shell
+./vendor/bin/psalm --no-cache
+```
 
 ### 9. API documentation
 
@@ -66,8 +71,10 @@ OpenAPI specification is available in `docs/openapi.yaml`.
 The specification can be viewed using Swagger Editor or any OpenAPI-compatible tool.
 
 ### 10. Setup
+```shell
 cp .env.example .env
 docker compose up -d --build
 php artisan migrate
 php artisan horizon
 php artisan schedule:work
+```
