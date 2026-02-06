@@ -17,14 +17,14 @@ final class CreateWalletTest extends TestCase
 
         $response = $this->postJson('/api/wallets', [
             'currency' => 'BTC',
-            'address' => 'address123',
+            'address' => '15cHRgVrGKz7qp2JL2N5mkB2MCFGLcnHxv',
         ]);
 
         $response->assertCreated();
 
         $this->assertDatabaseHas('wallets', [
             'currency' => 'BTC',
-            'address' => 'address123',
+            'address' => '15cHRgVrGKz7qp2JL2N5mkB2MCFGLcnHxv',
         ]);
 
         Queue::assertPushed(UpdateWalletBalanceJob::class, 1);
