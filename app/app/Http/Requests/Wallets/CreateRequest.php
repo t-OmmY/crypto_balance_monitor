@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace app\Http\Requests\Wallets;
+namespace App\Http\Requests\Wallets;
 
 use Illuminate\Foundation\Http\FormRequest;
 

@@ -15,6 +15,7 @@ final readonly class CreateWalletHandler
      */
     public function handle(CreateWallet $command): WalletData
     {
+        //todo add event for external wallet check
         $wallet = Wallet::where([
             'address' => $command->getAddress(),
             'currency' => $command->getCurrency()

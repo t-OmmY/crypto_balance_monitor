@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Wallets;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Override;
 
 final class GetRequest extends FormRequest
 {
@@ -11,6 +12,7 @@ final class GetRequest extends FormRequest
         return true;
     }
 
+    #[Override]
     protected function prepareForValidation(): void
     {
         $this->merge([

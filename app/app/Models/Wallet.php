@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use Database\Factories\WalletFactory;
 use DateTime;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[UseFactory(WalletFactory::class)]
 class Wallet extends BaseUuidModel
 {
+    /** @use HasFactory<WalletFactory> */
     use HasFactory;
 
     protected $fillable = [
