@@ -19,6 +19,8 @@
         <UnusedClass>
             <errorLevel type="suppress">
                 <directory name="app/Http/Controllers" />
+                <directory name="app/Console/Commands" />
+                <directory name="app/Providers" />
             </errorLevel>
         </UnusedClass>
         <UnusedMethod>

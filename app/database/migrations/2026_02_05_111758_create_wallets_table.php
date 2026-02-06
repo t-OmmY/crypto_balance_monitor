@@ -13,7 +13,7 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
             $table->string('address');
             $table->string('currency', 3);
-            $table->bigInteger('last_balance')->default(0);
+            $table->decimal('last_balance', 36, 18)->default(0)->unsigned();
             $table->timestamp('last_balance_changed_at')->nullable();
             $table->timestamps();
 

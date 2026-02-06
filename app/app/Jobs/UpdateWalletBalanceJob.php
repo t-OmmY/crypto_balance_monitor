@@ -1,0 +1,53 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Jobs;
+
+use App\Models\Wallet;
+use App\Models\WalletBalanceHistory;
+use App\Services\Balance\BalanceService;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+
+final class UpdateWalletBalanceJob implements ShouldQueue
+{
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    public string $walletId;
+
+    public function __construct(string $walletId)
+    {
+        $this->walletId = $walletId;
+    }
+
+    public function handle(BalanceService $balanceService): void
+    {
+        $wallet = Wallet::find($this->walletId);
+
+        if (null === $wallet) {
+            return;
+        }
+
+        $newBalance = $balanceService->getBalance($wallet);
+
+        WalletBalanceHistory::create([
+            'wallet_id' => $wallet->getId(),
+            'balance' => $newBalance,
+            'created_at' => now(),
+        ]);
+
+        if (false === $newBalance->isEqualTo($wallet->getBalance())) {
+            $wallet->update([
+                'last_balance' => $newBalance,
+                'last_balance_changed_at' => now(),
+            ]);
+        }
+    }
+}
