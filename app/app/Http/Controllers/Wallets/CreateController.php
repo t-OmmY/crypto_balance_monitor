@@ -7,7 +7,7 @@ namespace App\Http\Controllers\Wallets;
 use App\Domain\Wallet\Commands\CreateWallet;
 use App\Domain\Wallet\Commands\CreateWalletHandler;
 use App\Http\Controllers\Controller;
-use app\Http\Requests\Wallets\CreateRequest;
+use App\Http\Requests\Wallets\CreateRequest;
 use Illuminate\Http\JsonResponse;
 use Throwable;
 
