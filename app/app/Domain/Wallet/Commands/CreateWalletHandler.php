@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Wallet\Commands;
 
 use App\Domain\Wallet\DTOs\WalletData;
+use App\Jobs\UpdateWalletBalanceJob;
 use App\Models\Wallet;
 use App\Models\WalletBalanceHistory;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,6 @@ final readonly class CreateWalletHandler
      */
     public function handle(CreateWallet $command): WalletData
     {
-        //todo add event for external wallet check
         $wallet = Wallet::where([
             'address' => $command->getAddress(),
             'currency' => $command->getCurrency()
@@ -41,6 +41,8 @@ final readonly class CreateWalletHandler
             ]);
 
             DB::commit();
+
+            UpdateWalletBalanceJob::dispatch($wallet->getId());
 
             return WalletData::fromModel($wallet);
         } catch (Throwable $exception) {
