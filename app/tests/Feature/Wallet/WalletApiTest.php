@@ -1,6 +1,8 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace tests\Feature\Wallet;
+declare(strict_types=1);
+
+namespace Tests\Feature\Wallet;
 
 use App\Models\Wallet;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -19,6 +21,17 @@ class WalletApiTest extends TestCase
 
         $response->assertStatus(201);
         $this->assertDatabaseCount('wallets', 1);
+    }
+
+    public function test_can_not_create_wallet_throw_validation(): void
+    {
+        $response = $this->postJson('/api/wallets', [
+            'address' => 'test-address',
+            'currency' => 'UAH',
+        ]);
+
+        $response->assertStatus(422);
+        $this->assertDatabaseCount('wallets', 0);
     }
 
     public function test_can_list_wallets(): void

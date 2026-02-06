@@ -1,10 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domain\Wallet\DTOs;
 
 use App\Models\Wallet;
 use DateTime;
 
+/**
+ * @psalm-api
+ */
 final readonly class WalletData
 {
     private function __construct(
