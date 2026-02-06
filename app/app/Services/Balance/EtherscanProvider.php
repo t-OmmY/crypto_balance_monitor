@@ -42,8 +42,6 @@ final readonly class EtherscanProvider implements BalanceProviderInterface
             throw new BalanceProviderException('Etherscan API key is not configured');
         }
 
-        //todo try catch retries?
-
         $response = $this->request($currency, $address);
         if (false === $response->successful()) {
             throw new BalanceProviderException('Etherscan API error');
