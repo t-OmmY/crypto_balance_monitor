@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Casts\BigDecimalCast;
+use Brick\Math\BigDecimal;
 use Database\Factories\WalletFactory;
 use DateTime;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -24,6 +26,7 @@ class Wallet extends BaseUuidModel
     ];
 
     protected $casts = [
+        'last_balance' => BigDecimalCast::class,
         'last_balance_changed_at' => 'datetime',
     ];
 
@@ -37,7 +40,7 @@ class Wallet extends BaseUuidModel
         return $this->getAttribute('id');
     }
 
-    public function getBalance(): int
+    public function getBalance(): BigDecimal
     {
         return $this->getAttribute('last_balance');
     }

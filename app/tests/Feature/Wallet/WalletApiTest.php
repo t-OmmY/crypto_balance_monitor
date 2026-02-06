@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Wallet;
 
+use App\Jobs\UpdateWalletBalanceJob;
 use App\Models\Wallet;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class WalletApiTest extends TestCase
@@ -14,6 +16,8 @@ class WalletApiTest extends TestCase
 
     public function test_can_create_wallet(): void
     {
+        Queue::fake();
+
         $response = $this->postJson('/api/wallets', [
             'address' => 'test-address',
             'currency' => 'BTC',
@@ -21,6 +25,7 @@ class WalletApiTest extends TestCase
 
         $response->assertStatus(201);
         $this->assertDatabaseCount('wallets', 1);
+        Queue::assertPushed(UpdateWalletBalanceJob::class, 1);
     }
 
     public function test_can_not_create_wallet_throw_validation(): void

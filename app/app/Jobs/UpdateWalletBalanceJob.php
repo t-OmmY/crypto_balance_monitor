@@ -6,6 +6,7 @@ namespace App\Jobs;
 
 use App\Models\Wallet;
 use App\Models\WalletBalanceHistory;
+use App\Services\Balance\BalanceService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -26,7 +27,7 @@ class UpdateWalletBalanceJob implements ShouldQueue
         $this->walletId = $walletId;
     }
 
-    public function handle(): void
+    public function handle(BalanceService $balanceService): void
     {
         $wallet = Wallet::find($this->walletId);
 
@@ -34,12 +35,7 @@ class UpdateWalletBalanceJob implements ShouldQueue
             return;
         }
 
-        /**
-         * todo rewrite it
-         * 🔧 Тимчасово: fake balance
-         * Далі замінимо на BalanceProvider
-         */
-        $newBalance = random_int(0, 1000) / 10;
+        $newBalance = $balanceService->getBalance($wallet);
 
         WalletBalanceHistory::create([
             'wallet_id' => $wallet->getId(),
@@ -47,7 +43,7 @@ class UpdateWalletBalanceJob implements ShouldQueue
             'created_at' => now(),
         ]);
 
-        if ((string) $wallet->getBalance() !== (string) $newBalance) {
+        if (false === $newBalance->isEqualTo($wallet->getBalance())) {
             $wallet->update([
                 'last_balance' => $newBalance,
                 'last_balance_changed_at' => now(),

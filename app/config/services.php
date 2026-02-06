@@ -37,4 +37,7 @@ return [
         ],
     ],
 
+    'etherscan' => [
+        'key' => env('ETHERSCAN_API_KEY'),
+    ],
 ];

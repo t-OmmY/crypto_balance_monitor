@@ -16,7 +16,7 @@ final readonly class WalletData
         public string $id,
         public string $address,
         public string $currency,
-        public int $last_balance,
+        public string $last_balance,
         public null|DateTime $last_balance_changed_at
     ) {
     }
@@ -27,7 +27,7 @@ final readonly class WalletData
             $wallet->getId(),
             $wallet->getAddress(),
             strtoupper($wallet->getCurrency()),
-            $wallet->getBalance(),
+            (string) $wallet->getBalance()->toScale(18),
             $wallet->getBalanceChangedAt()
         );
     }

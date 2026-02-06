@@ -12,7 +12,7 @@ return new class () extends Migration {
         Schema::create('wallet_balance_histories', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('wallet_id')->constrained()->cascadeOnDelete();
-            $table->bigInteger('balance')->default(0);
+            $table->decimal('balance', 36, 18)->default(0)->unsigned();
             $table->timestamp('created_at')->useCurrent();
 
             $table->index(['wallet_id', 'created_at']);

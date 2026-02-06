@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Casts\BigDecimalCast;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WalletBalanceHistory extends BaseUuidModel
@@ -17,6 +18,7 @@ class WalletBalanceHistory extends BaseUuidModel
     ];
 
     protected $casts = [
+        'last_balance' => BigDecimalCast::class,
         'created_at' => 'datetime',
     ];
 
