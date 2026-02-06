@@ -28,6 +28,6 @@ final class PaginationRequest extends FormRequest
 
     public function getPerPage(): int
     {
-        return $this->get('per_page', self::DEFAULT_PER_PAGE);
+        return (int) $this->get('per_page', self::DEFAULT_PER_PAGE);
     }
 }

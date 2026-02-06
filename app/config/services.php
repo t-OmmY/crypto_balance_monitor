@@ -39,5 +39,11 @@ return [
 
     'etherscan' => [
         'key' => env('ETHERSCAN_API_KEY'),
+        'base_url' => env('ETHERSCAN_BASE_URL'),
+    ],
+
+    'blockchair' => [
+        'key' => env('BLOCKCHAIR_API_KEY'),
+        'base_url' => env('BLOCKCHAIR_BASE_URL'),
     ],
 ];

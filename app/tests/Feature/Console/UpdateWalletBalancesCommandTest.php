@@ -1,8 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Tests\Feature\Wallet;
+namespace Console;
 
 use App\Jobs\UpdateWalletBalanceJob;
 use App\Models\Wallet;
@@ -10,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
-class WalletConsoleTest extends TestCase
+class UpdateWalletBalancesCommandTest extends TestCase
 {
     use RefreshDatabase;
 

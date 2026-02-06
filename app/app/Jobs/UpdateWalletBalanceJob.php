@@ -22,6 +22,13 @@ final class UpdateWalletBalanceJob implements ShouldQueue
 
     public string $walletId;
 
+    public int $tries = 3;
+
+    public function backoff(): array
+    {
+        return [10, 30, 60];
+    }
+
     public function __construct(string $walletId)
     {
         $this->walletId = $walletId;

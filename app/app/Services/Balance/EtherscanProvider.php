@@ -6,12 +6,12 @@ namespace App\Services\Balance;
 
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
+use GuzzleHttp\Promise\PromiseInterface;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Override;
 
-/**
- * @psalm-api
- */
 final readonly class EtherscanProvider implements BalanceProviderInterface
 {
     private const int WEI_ETH_DELIMITER = 100000000000000000;
@@ -20,29 +20,29 @@ final readonly class EtherscanProvider implements BalanceProviderInterface
         'ETH' => 1,
     ];
 
+    public function __construct(
+        private null|string $apiKey,
+        private string $baseUrl
+    ) {
+    }
+
     #[Override]
     public function support(string $currency): bool
     {
         return true === isset(self::SUPPORTED_CURRENCIES_CHAIN_IDS[$currency]);
     }
 
+    /**
+     * @throws ConnectionException
+     */
     #[Override]
     public function getBalance(string $currency, string $address): BigDecimal
     {
-        //todo try catch retries?
+        if (null === $this->apiKey || '' === $this->apiKey) {
+            throw new BalanceProviderException('Etherscan API key is not configured');
+        }
 
-        /** @var int $chainId */
-        $chainId = self::SUPPORTED_CURRENCIES_CHAIN_IDS[$currency];
-        $apikey = config('services.etherscan.key');
-        $response = Http::get('https://api.etherscan.io/v2/api', [
-            'chainid' => $chainId,
-            'module' => 'account',
-            'action' => 'balance',
-            'address' => $address,
-            'tag' => 'latest',
-            'apikey' => $apikey,
-        ]);
-
+        $response = $this->request($currency, $address);
         if (false === $response->successful()) {
             throw new BalanceProviderException('Etherscan API error');
         }
@@ -53,5 +53,27 @@ final readonly class EtherscanProvider implements BalanceProviderInterface
         }
 
         return BigDecimal::of($result)->dividedBy(self::WEI_ETH_DELIMITER, 18, RoundingMode::Down);
+    }
+
+    /**
+     * @throws ConnectionException
+     */
+    private function request(string $currency, string $address): Response|PromiseInterface
+    {
+        /** @var int $chainId */
+        $chainId = self::SUPPORTED_CURRENCIES_CHAIN_IDS[$currency];
+
+        return Http::retry(
+            times: 3,
+            sleepMilliseconds: 500,
+            throw: false
+        )->get($this->baseUrl, [
+            'chainid' => $chainId,
+            'module' => 'account',
+            'action' => 'balance',
+            'address' => $address,
+            'tag' => 'latest',
+            'apikey' => $this->apiKey,
+        ]);
     }
 }
