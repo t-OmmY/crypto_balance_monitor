@@ -6,8 +6,9 @@ namespace App\Services\Balance;
 
 use App\Models\Wallet;
 use Brick\Math\BigDecimal;
+use Illuminate\Support\Facades\Log;
 
-final readonly class BalanceService
+class BalanceService
 {
     /**
      * @param iterable<BalanceProviderInterface> $providers
@@ -15,7 +16,7 @@ final readonly class BalanceService
      * @psalm-api
      */
     public function __construct(
-        private iterable $providers
+        private readonly iterable $providers
     ) {
     }
 
@@ -26,9 +27,28 @@ final readonly class BalanceService
                 continue;
             }
 
-            return $provider->getBalance($wallet->getCurrency(), $wallet->getAddress());
+            try {
+                return $provider->getBalance(
+                    $wallet->getCurrency(),
+                    $wallet->getAddress()
+                );
+            } catch (BalanceProviderException $e) {
+                Log::warning('Balance provider failed', [
+                    'provider' => get_class($provider),
+                    'wallet_id' => $wallet->getId(),
+                    'currency' => $wallet->getCurrency(),
+                    'message' => $e->getMessage(),
+                ]);
+
+                continue;
+            }
         }
 
-        throw new BalanceProviderException('Unsupported currency');
+        Log::error('No balance provider available', [
+            'wallet_id' => $wallet->getId(),
+            'currency' => $wallet->getCurrency(),
+        ]);
+
+        throw new BalanceProviderException('No provider could fetch balance');
     }
 }
