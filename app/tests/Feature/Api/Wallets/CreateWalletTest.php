@@ -17,14 +17,14 @@ final class CreateWalletTest extends TestCase
 
         $response = $this->postJson('/api/wallets', [
             'currency' => 'BTC',
-            'address' => 'address123',
+            'address' => '15cHRgVrGKz7qp2JL2N5mkB2MCFGLcnHxv',
         ]);
 
         $response->assertCreated();
 
         $this->assertDatabaseHas('wallets', [
             'currency' => 'BTC',
-            'address' => 'address123',
+            'address' => '15cHRgVrGKz7qp2JL2N5mkB2MCFGLcnHxv',
         ]);
 
         Queue::assertPushed(UpdateWalletBalanceJob::class, 1);
@@ -39,5 +39,15 @@ final class CreateWalletTest extends TestCase
 
         $response->assertStatus(422);
         $this->assertDatabaseCount('wallets', 0);
+    }
+
+    public function test_invalid_eth_address_fails_validation(): void
+    {
+        $response = $this->postJson('/api/wallets', [
+            'currency' => 'ETH',
+            'address' => 'invalid',
+        ]);
+
+        $response->assertStatus(422);
     }
 }

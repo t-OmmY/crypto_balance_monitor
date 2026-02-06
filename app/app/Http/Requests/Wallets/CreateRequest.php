@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Wallets;
 
+use App\Rules\WalletAddressRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 final class CreateRequest extends FormRequest
 {
@@ -18,11 +20,9 @@ final class CreateRequest extends FormRequest
      */
     public function rules(): array
     {
-        $supportedCurrencies = (array) config('app.supported_currencies');
-
         return [
-            'address' => ['required', 'string'],
-            'currency' => ['required', 'in:' . implode(',', $supportedCurrencies)],
+            'address' => ['required', new WalletAddressRule($this->getCurrency())],
+            'currency' => ['required', Rule::in((array) config('app.supported_currencies'))],
         ];
     }
 

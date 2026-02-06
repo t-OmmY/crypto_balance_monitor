@@ -12,6 +12,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 final class UpdateWalletBalanceJob implements ShouldQueue
 {
@@ -34,6 +36,9 @@ final class UpdateWalletBalanceJob implements ShouldQueue
         $this->walletId = $walletId;
     }
 
+    /**
+     * @throws Throwable
+     */
     public function handle(BalanceService $balanceService): void
     {
         $wallet = Wallet::find($this->walletId);
@@ -44,17 +49,26 @@ final class UpdateWalletBalanceJob implements ShouldQueue
 
         $newBalance = $balanceService->getBalance($wallet);
 
-        WalletBalanceHistory::create([
-            'wallet_id' => $wallet->getId(),
-            'balance' => $newBalance,
-            'created_at' => now(),
-        ]);
-
-        if (false === $newBalance->isEqualTo($wallet->getBalance())) {
-            $wallet->update([
-                'last_balance' => $newBalance,
-                'last_balance_changed_at' => now(),
+        DB::beginTransaction();
+        try {
+            WalletBalanceHistory::create([
+                'wallet_id' => $wallet->getId(),
+                'balance' => $newBalance,
+                'created_at' => now(),
             ]);
+
+            if (false === $newBalance->isEqualTo($wallet->getBalance())) {
+                $wallet->update([
+                    'last_balance' => $newBalance,
+                    'last_balance_changed_at' => now(),
+                ]);
+            }
+
+            DB::commit();
+        } catch (Throwable $exception) {
+            DB::rollBack();
+
+            throw $exception;
         }
     }
 }
