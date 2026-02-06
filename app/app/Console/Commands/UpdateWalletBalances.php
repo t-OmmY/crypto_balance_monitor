@@ -8,7 +8,7 @@ use App\Jobs\UpdateWalletBalanceJob;
 use App\Models\Wallet;
 use Illuminate\Console\Command;
 
-class UpdateWalletBalances extends Command
+final class UpdateWalletBalances extends Command
 {
     /**
      * @var string

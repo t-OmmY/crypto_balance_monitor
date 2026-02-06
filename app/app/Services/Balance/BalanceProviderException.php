@@ -6,6 +6,6 @@ namespace App\Services\Balance;
 
 use RuntimeException;
 
-class BalanceProviderException extends RuntimeException
+final class BalanceProviderException extends RuntimeException
 {
 }

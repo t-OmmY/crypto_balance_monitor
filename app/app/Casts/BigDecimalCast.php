@@ -13,7 +13,7 @@ use Override;
 /**
  * @implements CastsAttributes<BigDecimal, string>
  */
-class BigDecimalCast implements CastsAttributes
+final class BigDecimalCast implements CastsAttributes
 {
     #[Override]
     public function get(Model $model, string $key, mixed $value, array $attributes): mixed
