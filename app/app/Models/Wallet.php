@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Casts\BigDecimalCast;
+use App\Domain\Wallet\Enums\WalletStatus;
 use App\Enums\Currency;
 use Brick\Math\BigDecimal;
 use Database\Factories\WalletFactory;
@@ -22,12 +23,14 @@ class Wallet extends BaseUuidModel
     protected $fillable = [
         'address',
         'currency',
+        'status',
         'last_balance',
         'last_balance_changed_at',
     ];
 
     protected $casts = [
         'currency' => Currency::class,
+        'status' => WalletStatus::class,
         'last_balance' => BigDecimalCast::class,
         'last_balance_changed_at' => 'datetime',
     ];
@@ -55,6 +58,11 @@ class Wallet extends BaseUuidModel
     public function getCurrency(): Currency
     {
         return $this->getAttribute('currency');
+    }
+
+    public function getStatus(): WalletStatus
+    {
+        return $this->getAttribute('status');
     }
 
     public function getBalanceChangedAt(): null|DateTime

@@ -32,6 +32,7 @@
         <PossiblyUnusedMethod>
             <errorLevel type="suppress">
                 <directory name="app/Http/Requests" />
+                <directory name="app/Domain/Wallet/Enums" />
             </errorLevel>
         </PossiblyUnusedMethod>
         <PossiblyUnusedProperty>

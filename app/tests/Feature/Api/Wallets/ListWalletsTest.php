@@ -23,6 +23,7 @@ final class ListWalletsTest extends TestCase
                         'id',
                         'address',
                         'currency',
+                        'status',
                         'last_balance',
                         'last_balance_changed_at',
                     ],

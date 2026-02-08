@@ -2,6 +2,7 @@
 
 namespace Api\Wallets;
 
+use App\Domain\Wallet\Enums\WalletStatus;
 use App\Jobs\UpdateWalletBalanceJob;
 use App\Models\Wallet;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -27,6 +28,7 @@ final class CreateWalletTest extends TestCase
         ]);
 
         $this->assertDatabaseHas('wallets', [
+            'status' => WalletStatus::CREATED->value,
             'currency' => 'BTC',
             'address' => '15cHRgVrGKz7qp2JL2N5mkB2MCFGLcnHxv',
         ]);
@@ -41,6 +43,7 @@ final class CreateWalletTest extends TestCase
 
         $response = $this->postJson('/api/wallets', [
             'currency' => $wallet->getCurrency()->value,
+            'status' => $wallet->getStatus()->value,
             'address' => $wallet->getAddress(),
         ]);
 

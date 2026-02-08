@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Wallet\Commands;
 
+use App\Domain\Wallet\Enums\WalletStatus;
 use App\Domain\Wallet\Exceptions\WalletNotFoundException;
 use App\Models\Wallet;
 use App\Models\WalletBalanceHistory;
@@ -31,10 +32,16 @@ final readonly class UpdateWalletBalanceHandler
             throw new WalletNotFoundException();
         }
 
-        DB::beginTransaction();
+        if (false === $wallet->getStatus()->isUpdatable()) {
+            return;
+        }
 
         try {
+            $wallet->update(['status' => WalletStatus::SYNCING]);
+
             $newBalance = $this->balanceService->getBalance($wallet);
+
+            DB::beginTransaction();
 
             WalletBalanceHistory::create([
                 'wallet_id' => $wallet->getId(),
@@ -44,6 +51,7 @@ final readonly class UpdateWalletBalanceHandler
 
             if (false === $newBalance->isEqualTo($wallet->getBalance())) {
                 $wallet->update([
+                    'status' => WalletStatus::ACTIVE,
                     'last_balance' => $newBalance,
                     'last_balance_changed_at' => now(),
                 ]);
@@ -52,6 +60,8 @@ final readonly class UpdateWalletBalanceHandler
             DB::commit();
         } catch (Throwable $exception) {
             DB::rollBack();
+
+            $wallet->update(['status' => WalletStatus::FAILED]);
 
             throw $exception;
         }

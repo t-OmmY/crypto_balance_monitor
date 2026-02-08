@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Wallet\Commands;
 
+use App\Domain\Wallet\Enums\WalletStatus;
 use App\Domain\Wallet\Results\CreateWalletResult;
 use App\Jobs\UpdateWalletBalanceJob;
 use App\Models\Wallet;
@@ -34,6 +35,7 @@ final readonly class CreateWalletHandler
             $wallet = Wallet::create([
                 'address' => $command->getAddress(),
                 'currency' => $command->getCurrency()->value,
+                'status' => WalletStatus::CREATED,
                 'last_balance' => 0,
             ]);
 

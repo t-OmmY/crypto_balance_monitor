@@ -2,6 +2,7 @@
 
 namespace Jobs;
 
+use App\Domain\Wallet\Enums\WalletStatus;
 use App\Jobs\UpdateWalletBalanceJob;
 use App\Models\Wallet;
 use App\Services\Balance\BalanceService;

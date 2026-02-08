@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services\Balance;
 
+use App\Domain\Wallet\Enums\WalletStatus;
 use App\Enums\Currency;
 use App\Models\Wallet;
 use App\Services\Balance\BalanceProviderException;
@@ -34,6 +35,7 @@ final class BalanceServiceTest extends TestCase
 
         $wallet = new Wallet([
             'currency' => Currency::BTC,
+            'status' => WalletStatus::ACTIVE,
             'address' => 'addr',
         ]);
 

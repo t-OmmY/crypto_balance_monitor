@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Domain\Wallet\Enums\WalletStatus;
 use App\Enums\Currency;
 use App\Models\Wallet;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -24,6 +25,7 @@ class WalletFactory extends Factory
 
         return [
             'currency' => $currency->value,
+            'status' =>  WalletStatus::ACTIVE->value,
             'address' => $this->fakeAddress($currency),
             'last_balance' => fake()->numberBetween(),
         ];
