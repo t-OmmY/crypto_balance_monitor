@@ -142,6 +142,8 @@ Tests can be run with:
 php artisan test
 ```
 
+---
+
 ### 11. Static analysis & code quality
 The project uses the following tools to ensure code quality:
 - PHP_CodeSniffer
@@ -154,11 +156,15 @@ The project uses the following tools to ensure code quality:
 ```
 The codebase uses strict typing, typed properties, and enums for domain values.
 
+---
+
 ### 12. API documentation
 
 OpenAPI specification is available in `docs/openapi.yaml`.
 
 The specification can be viewed using Swagger Editor or any OpenAPI-compatible tool.
+
+---
 
 ### 13. Setup
 ```shell
@@ -168,6 +174,8 @@ php artisan migrate
 php artisan horizon
 php artisan schedule:work
 ```
+
+---
 
 ### 14. Design decisions & trade-offs
 Key design decisions made during development:
