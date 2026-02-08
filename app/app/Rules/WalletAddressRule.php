@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace App\Rules;
 
+use App\Enums\Currency;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Override;
 
 final class WalletAddressRule implements ValidationRule
 {
-    private const array CURRENCY_REGEX_MAP = [
-        'BTC' => '/^(1|3|bc1)[a-zA-Z0-9]{25,39}$/',
-        'ETH' => '/^0x[a-fA-F0-9]{40}$/',
-        'LTC' => '/^(L|M|ltc1)[a-zA-Z0-9]{26,39}$/',
-    ];
+    private const string BTC_ADDRESS_PATTERN = '/^(1|3|bc1)[a-zA-Z0-9]{25,39}$/';
+    private const string ETH_ADDRESS_PATTERN = '/^0x[a-fA-F0-9]{40}$/';
+    private const string LTC_ADDRESS_PATTERN = '/^(L|M|ltc1)[a-zA-Z0-9]{26,39}$/';
 
     public function __construct(
-        private readonly string $currency
+        private readonly Currency $currency
     ) {
     }
 
@@ -29,7 +28,12 @@ final class WalletAddressRule implements ValidationRule
             return;
         }
 
-        $pattern = self::CURRENCY_REGEX_MAP[$this->currency] ?? null;
+        $pattern = match ($this->currency) {
+            Currency::BTC => self::BTC_ADDRESS_PATTERN,
+            Currency::ETH => self::ETH_ADDRESS_PATTERN,
+            Currency::LTC => self::LTC_ADDRESS_PATTERN,
+        };
+
         if (null === $pattern) {
             return;
         }

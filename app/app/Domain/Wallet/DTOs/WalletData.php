@@ -26,7 +26,7 @@ final readonly class WalletData
         return new self(
             $wallet->getId(),
             $wallet->getAddress(),
-            strtoupper($wallet->getCurrency()),
+            strtoupper($wallet->getCurrency()->value),
             (string) $wallet->getBalance()->toScale(18),
             $wallet->getBalanceChangedAt()
         );

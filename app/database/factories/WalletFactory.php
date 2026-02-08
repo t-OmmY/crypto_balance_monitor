@@ -21,6 +21,7 @@ class WalletFactory extends Factory
     {
         /** @var Currency $currency */
         $currency = $this->faker->randomElement(Currency::cases());
+
         return [
             'currency' => $currency->value,
             'address' => $this->fakeAddress($currency),

@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain\Wallet\Commands;
 
+use App\Enums\Currency;
+
 final readonly class CreateWallet
 {
     public function __construct(
         private string $address,
-        private string $currency
+        private Currency $currency
     ) {
     }
 
@@ -17,7 +19,7 @@ final readonly class CreateWallet
         return $this->address;
     }
 
-    public function getCurrency(): string
+    public function getCurrency(): Currency
     {
         return $this->currency;
     }

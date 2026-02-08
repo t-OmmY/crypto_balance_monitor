@@ -1,6 +1,7 @@
 <?php
 
 namespace Services\Balance;
+use App\Enums\Currency;
 use App\Services\Balance\BalanceProviderException;
 use App\Services\Balance\EtherscanProvider;
 use Illuminate\Support\Facades\Http;
@@ -18,7 +19,7 @@ class EtherscanProviderTest extends TestCase
 
         $provider = new EtherscanProvider('key', 'https://api.etherscan.io/v2/api');
 
-        $this->assertEquals(1.0, $provider->getBalance('ETH', 'addr')->toFloat());
+        $this->assertEquals(1.0, $provider->getBalance(Currency::ETH, 'addr')->toFloat());
     }
 
     public function test_etherscan_provider_requires_api_key(): void
@@ -27,6 +28,6 @@ class EtherscanProviderTest extends TestCase
 
         $this->expectException(BalanceProviderException::class);
 
-        $provider->getBalance('ETH', 'address');
+        $provider->getBalance(Currency::ETH, 'address');
     }
 }

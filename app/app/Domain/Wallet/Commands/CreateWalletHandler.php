@@ -20,7 +20,7 @@ final readonly class CreateWalletHandler
     {
         $wallet = Wallet::where([
             'address' => $command->getAddress(),
-            'currency' => $command->getCurrency()
+            'currency' => $command->getCurrency()->value
         ])->first();
         if (null !== $wallet) {
             return new CreateWalletResult(
@@ -33,7 +33,7 @@ final readonly class CreateWalletHandler
         try {
             $wallet = Wallet::create([
                 'address' => $command->getAddress(),
-                'currency' => $command->getCurrency(),
+                'currency' => $command->getCurrency()->value,
                 'last_balance' => 0,
             ]);
 

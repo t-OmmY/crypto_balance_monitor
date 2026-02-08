@@ -40,7 +40,7 @@ final class CreateWalletTest extends TestCase
         $wallet = Wallet::factory()->create();
 
         $response = $this->postJson('/api/wallets', [
-            'currency' => $wallet->getCurrency(),
+            'currency' => $wallet->getCurrency()->value,
             'address' => $wallet->getAddress(),
         ]);
 

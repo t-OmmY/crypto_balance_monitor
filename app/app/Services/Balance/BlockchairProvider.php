@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Balance;
 
+use App\Enums\Currency;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use GuzzleHttp\Promise\PromiseInterface;
@@ -17,8 +18,8 @@ final readonly class BlockchairProvider implements BalanceProviderInterface
     private const int SATOSHI_DELIMITER = 100000000;
 
     private const array SUPPORTED_CURRENCIES_NETWORKS = [
-        'BTC' => 'bitcoin',
-        'LTC' => 'litecoin',
+        Currency::BTC->value => 'bitcoin',
+        Currency::LTC->value => 'litecoin',
     ];
 
     public function __construct(
@@ -28,16 +29,16 @@ final readonly class BlockchairProvider implements BalanceProviderInterface
     }
 
     #[Override]
-    public function support(string $currency): bool
+    public function support(Currency $currency): bool
     {
-        return true === isset(self::SUPPORTED_CURRENCIES_NETWORKS[$currency]);
+        return true === isset(self::SUPPORTED_CURRENCIES_NETWORKS[$currency->value]);
     }
 
     /**
      * @throws ConnectionException
      */
     #[Override]
-    public function getBalance(string $currency, string $address): BigDecimal
+    public function getBalance(Currency $currency, string $address): BigDecimal
     {
         if (null === $this->apiKey || '' === $this->apiKey) {
             throw new BalanceProviderException('Blockchair API key is not configured');
@@ -49,23 +50,22 @@ final readonly class BlockchairProvider implements BalanceProviderInterface
             throw new BalanceProviderException('Blockchair API error');
         }
 
-        $data = $response->json('data');
-        $balance = $data[$address]['address']['balance'] ?? null;
-
+        $balance = data_get($response->json(), "data.{$address}.address.balance");
         if (false === is_numeric($balance)) {
             throw new BalanceProviderException('Invalid Blockchair response');
         }
 
-        return BigDecimal::of($balance)->dividedBy(self::SATOSHI_DELIMITER, 18, RoundingMode::Down);
+        return BigDecimal::of($balance)
+            ->dividedBy(self::SATOSHI_DELIMITER, 18, RoundingMode::Down);
     }
 
     /**
      * @throws ConnectionException
      */
-    private function request(string $currency, string $address): Response|PromiseInterface
+    private function request(Currency $currency, string $address): Response|PromiseInterface
     {
         /** @var string $network */
-        $network = self::SUPPORTED_CURRENCIES_NETWORKS[$currency];
+        $network = self::SUPPORTED_CURRENCIES_NETWORKS[$currency->value];
 
         return Http::retry(
             times: 3,

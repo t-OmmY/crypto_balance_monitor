@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services\Balance;
 
+use App\Enums\Currency;
 use App\Services\Balance\BalanceProviderException;
 use App\Services\Balance\BlockchairProvider;
 use Illuminate\Support\Facades\Http;
@@ -27,7 +28,7 @@ final class BlockchairProviderTest extends TestCase
 
         $provider = new BlockchairProvider('key', 'https://api.blockchair.com');
 
-        $this->assertEquals(1.0, $provider->getBalance('BTC', 'addr')->toFloat());
+        $this->assertEquals(1.0, $provider->getBalance(Currency::BTC, 'addr')->toFloat());
     }
 
     public function test_requires_api_key(): void
@@ -35,6 +36,6 @@ final class BlockchairProviderTest extends TestCase
         $this->expectException(BalanceProviderException::class);
 
         (new BlockchairProvider(null, 'https://api.blockchair.com'))
-            ->getBalance('BTC', 'addr');
+            ->getBalance(Currency::BTC, 'addr');
     }
 }
