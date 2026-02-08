@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Wallet\Commands;
 
-use App\Domain\Wallet\DTOs\WalletData;
+use App\Domain\Wallet\Results\CreateWalletResult;
 use App\Jobs\UpdateWalletBalanceJob;
 use App\Models\Wallet;
 use App\Models\WalletBalanceHistory;
@@ -16,14 +16,17 @@ final readonly class CreateWalletHandler
     /**
      * @throws Throwable
      */
-    public function handle(CreateWallet $command): WalletData
+    public function handle(CreateWallet $command): CreateWalletResult
     {
         $wallet = Wallet::where([
             'address' => $command->getAddress(),
             'currency' => $command->getCurrency()
         ])->first();
         if (null !== $wallet) {
-            return WalletData::fromModel($wallet);
+            return new CreateWalletResult(
+                $wallet->getId(),
+                true,
+            );
         }
 
         DB::beginTransaction();
@@ -44,7 +47,10 @@ final readonly class CreateWalletHandler
 
             UpdateWalletBalanceJob::dispatch($wallet->getId());
 
-            return WalletData::fromModel($wallet);
+            return new CreateWalletResult(
+                $wallet->getId(),
+                false,
+            );
         } catch (Throwable $exception) {
             DB::rollBack();
 

@@ -3,6 +3,7 @@
 namespace Api\Wallets;
 
 use App\Jobs\UpdateWalletBalanceJob;
+use App\Models\Wallet;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
@@ -21,6 +22,9 @@ final class CreateWalletTest extends TestCase
         ]);
 
         $response->assertCreated();
+        $response->assertJsonStructure([
+            'id'
+        ]);
 
         $this->assertDatabaseHas('wallets', [
             'currency' => 'BTC',
@@ -28,6 +32,24 @@ final class CreateWalletTest extends TestCase
         ]);
 
         Queue::assertPushed(UpdateWalletBalanceJob::class, 1);
+    }
+
+    public function test_creates_wallet_already_exists(): void
+    {
+        Queue::fake();
+        $wallet = Wallet::factory()->create();
+
+        $response = $this->postJson('/api/wallets', [
+            'currency' => $wallet->getCurrency(),
+            'address' => $wallet->getAddress(),
+        ]);
+
+        $response->assertOk();
+        $response->assertJsonStructure([
+            'id'
+        ]);
+
+        Queue::assertNotPushed(UpdateWalletBalanceJob::class, 1);
     }
 
     public function test_can_not_create_wallet_throw_validation(): void
