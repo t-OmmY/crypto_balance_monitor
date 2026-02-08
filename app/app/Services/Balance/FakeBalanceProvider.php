@@ -21,7 +21,7 @@ final class FakeBalanceProvider implements BalanceProviderInterface
     {
         $response = match ($currency) {
             Currency::BTC => 1.2345,
-            Currency::ETH => 42.0,
+            Currency::ETH => 47.0,
             Currency::LTC => 0.9876
         };
 
