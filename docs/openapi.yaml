@@ -32,7 +32,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Wallet'
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "8b472e2d-dc70-4404-b3dd-e6864f0d8c29"
+                required:
+                  - id
         '422':
           description: Validation error
 
@@ -103,6 +109,9 @@ components:
         currency:
           type: string
           example: BTC
+        status:
+          type: string
+          example: active
         address:
           type: string
           example: 34xp4vRoCGJym3xR7yCVPFHoCNxv4Twseo

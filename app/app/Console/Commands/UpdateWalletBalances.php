@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Domain\Wallet\Enums\WalletStatus;
 use App\Jobs\UpdateWalletBalanceJob;
 use App\Models\Wallet;
 use Illuminate\Console\Command;
@@ -24,6 +25,10 @@ final class UpdateWalletBalances extends Command
     {
         Wallet::query()
             ->select('id')
+            ->whereIn('status', [
+                WalletStatus::CREATED,
+                WalletStatus::ACTIVE,
+            ])
             ->chunkById(100, function ($wallets) {
                 /** @var Wallet $wallet */
                 foreach ($wallets as $wallet) {

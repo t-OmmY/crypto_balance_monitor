@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services\Balance;
 
+use App\Domain\Wallet\Enums\WalletStatus;
+use App\Enums\Currency;
 use App\Models\Wallet;
 use App\Services\Balance\BalanceProviderException;
 use App\Services\Balance\BalanceProviderInterface;
@@ -20,19 +22,20 @@ final class BalanceServiceTest extends TestCase
     public function test_uses_supported_provider(): void
     {
         $provider = new class implements BalanceProviderInterface {
-            public function support(string $currency): bool
+            public function support(Currency $currency): bool
             {
-                return $currency === 'BTC';
+                return $currency === Currency::BTC;
             }
 
-            public function getBalance(string $currency, string $address): BigDecimal
+            public function getBalance(Currency $currency, string $address): BigDecimal
             {
                 return BigDecimal::of('1.23');
             }
         };
 
         $wallet = new Wallet([
-            'currency' => 'BTC',
+            'currency' => Currency::BTC,
+            'status' => WalletStatus::ACTIVE,
             'address' => 'addr',
         ]);
 
@@ -43,15 +46,17 @@ final class BalanceServiceTest extends TestCase
 
     public function test_throws_exception_when_no_provider_supports_currency(): void
     {
-        $provider = Mockery::mock(BalanceProviderInterface::class);
-        $provider->shouldReceive('support')->andReturn(false);
+        $providerMock = Mockery::mock(BalanceProviderInterface::class);
+        $providerMock->shouldReceive('support')->andReturn(false);
 
         $this->expectException(BalanceProviderException::class);
 
-        $service = new BalanceService([$provider]);
+        $service = new BalanceService([$providerMock]);
 
-        $wallet = Wallet::factory()->create(['currency' => 'DOGE']);
+        $walletMock = Mockery::mock(Wallet::class);
+        $walletMock->shouldReceive('getCurrency')->andReturn(Currency::ETH);
+        $walletMock->shouldReceive('getId')->andReturn('foobar');
 
-        $service->getBalance($wallet);
+        $service->getBalance($walletMock);
     }
 }

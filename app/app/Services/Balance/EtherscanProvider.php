@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Balance;
 
+use App\Enums\Currency;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use GuzzleHttp\Promise\PromiseInterface;
@@ -17,7 +18,7 @@ final readonly class EtherscanProvider implements BalanceProviderInterface
     private const int WEI_ETH_DELIMITER = 100000000000000000;
 
     private const array SUPPORTED_CURRENCIES_CHAIN_IDS = [
-        'ETH' => 1,
+        Currency::ETH->value => 1,
     ];
 
     public function __construct(
@@ -27,16 +28,16 @@ final readonly class EtherscanProvider implements BalanceProviderInterface
     }
 
     #[Override]
-    public function support(string $currency): bool
+    public function support(Currency $currency): bool
     {
-        return true === isset(self::SUPPORTED_CURRENCIES_CHAIN_IDS[$currency]);
+        return true === isset(self::SUPPORTED_CURRENCIES_CHAIN_IDS[$currency->value]);
     }
 
     /**
      * @throws ConnectionException
      */
     #[Override]
-    public function getBalance(string $currency, string $address): BigDecimal
+    public function getBalance(Currency $currency, string $address): BigDecimal
     {
         if (null === $this->apiKey || '' === $this->apiKey) {
             throw new BalanceProviderException('Etherscan API key is not configured');
@@ -58,10 +59,10 @@ final readonly class EtherscanProvider implements BalanceProviderInterface
     /**
      * @throws ConnectionException
      */
-    private function request(string $currency, string $address): Response|PromiseInterface
+    private function request(Currency $currency, string $address): Response|PromiseInterface
     {
         /** @var int $chainId */
-        $chainId = self::SUPPORTED_CURRENCIES_CHAIN_IDS[$currency];
+        $chainId = self::SUPPORTED_CURRENCIES_CHAIN_IDS[$currency->value];
 
         return Http::retry(
             times: 3,

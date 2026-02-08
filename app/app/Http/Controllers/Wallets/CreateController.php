@@ -9,6 +9,7 @@ use App\Domain\Wallet\Commands\CreateWalletHandler;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Wallets\CreateRequest;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 final class CreateController extends Controller
@@ -24,8 +25,11 @@ final class CreateController extends Controller
     public function __invoke(CreateRequest $request): JsonResponse
     {
         $command = new CreateWallet($request->getAddress(), $request->getCurrency());
-        $wallet = $this->createWalletHandler->handle($command);
+        $result = $this->createWalletHandler->handle($command);
 
-        return response()->json($wallet, 201);
+        return response()->json(
+            ['id' => $result->getWalletId()],
+            $result->isAlreadyExists() ? Response::HTTP_OK : Response::HTTP_CREATED
+        );
     }
 }

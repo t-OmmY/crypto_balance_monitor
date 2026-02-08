@@ -2,6 +2,7 @@
 
 namespace Services\Balance;
 
+use App\Enums\Currency;
 use App\Services\Balance\FakeBalanceProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -11,8 +12,8 @@ final class FakeBalanceProviderTest extends TestCase
     {
         $provider = new FakeBalanceProvider();
 
-        $this->assertTrue($provider->support('BTC'));
-        $this->assertTrue($provider->support('ETH'));
-        $this->assertTrue($provider->support('LTC'));
+        $this->assertTrue($provider->support(Currency::BTC));
+        $this->assertTrue($provider->support(Currency::ETH));
+        $this->assertTrue($provider->support(Currency::LTC));
     }
 }

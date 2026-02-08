@@ -36,7 +36,7 @@ class BalanceService
                 Log::warning('Balance provider failed', [
                     'provider' => get_class($provider),
                     'wallet_id' => $wallet->getId(),
-                    'currency' => $wallet->getCurrency(),
+                    'currency' => $wallet->getCurrency()->value,
                     'message' => $e->getMessage(),
                 ]);
 
@@ -46,7 +46,7 @@ class BalanceService
 
         Log::error('No balance provider available', [
             'wallet_id' => $wallet->getId(),
-            'currency' => $wallet->getCurrency(),
+            'currency' => $wallet->getCurrency()->value,
         ]);
 
         throw new BalanceProviderException('No provider could fetch balance');
